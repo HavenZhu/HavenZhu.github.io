@@ -61,11 +61,11 @@ navs:
     label: Home
 
   -
-    href: /blog
+    href: /blog.html
     label: Blog
 
   -
-    href: /about
+    href: /about.html
     label: About
 
 # Sidebar to show popular repo
