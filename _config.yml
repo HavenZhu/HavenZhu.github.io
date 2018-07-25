@@ -7,13 +7,13 @@
 
 # Site settings
 title: 虚空 # ex. I m Chuan
-name: 朱宁 # ex. DONGChuan
+name: Haven_ZN # ex. DONGChuan
 email: 19946109897@163.com
 location: 上海 # ex. Nice, France
-company: 
-company_url: 
+company:
+company_url:
 github_url: # ex. https://github.com/DONGChuan
-github_username: HavenZhu
+github_username:
 description: 闲来无事，随便写写
 favicon: favicon.png # Image must be in assets/images
 repository: # ex. DONGChuan/DONGChuan.github.io
