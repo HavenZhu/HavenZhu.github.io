@@ -46,9 +46,8 @@ Class就是结构体objc_class，但是objc_class继承于objc_object，那就�
 我们都知道class中存储的是描述对象的相关信息，那么相应的meta class中存放的就是描述class相关信息。说的更直白一点，在我们写代码时，通过对象来调用的方法（实例方法）都是存储在class中的，通过类名来调用的方法（类方法）都是存储在meta class中的。
 
 到这里对象和类的关系已经比较清楚了，但是如果细细思考一下，会发现还有一个问题，就是meta class也是有isa指针的，那么这个isa又指向了哪里呢？在上面给出的那篇文章里面有这么一张图：
-<p align="center">
- <img src="http://47.100.168.106/assets/images/2017_02_12/class_diagram.jpeg" />
-</p>
+
+<p align="center"><img src="http://47.100.168.106/assets/images/2017_02_12/class_diagram.jpeg" /></p>
 
 这张图解释的非常清楚，meta class的isa指向了root meta class(绝大部分情况下root class就是NSObject)，root meta class的isa指向自身，isa的链路就是这样了。
 
