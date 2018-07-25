@@ -5,7 +5,7 @@ category: Runtime源码阅读
 tags: [Runtime]
 ---
 
-之前已经讲过方法加载的全过程，protocol的加载过程与method是一样的，就不再赘述了。不清楚的可以参考前面写的方法加载的过程
+之前已经讲过方法加载的全过程，protocol的加载过程与method是一样的，就不再赘述了。不清楚的可以参考前面写的方法加载的过程。
 
 那么这篇说些啥呢？
 1. protocol在runtime层的表示

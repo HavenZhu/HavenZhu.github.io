@@ -5,7 +5,9 @@ category: OC杂
 tags: [OC]
 ---
 
-今天在使用NSLocalizedString的时候碰到一个小问题:
+今天在使用NSLocalizedString的时候碰到一个小问题
+
+如下：
 ```
 中文版：我是来自“xxx”的xxx
 英文版：I am xxx from 'xxx'
