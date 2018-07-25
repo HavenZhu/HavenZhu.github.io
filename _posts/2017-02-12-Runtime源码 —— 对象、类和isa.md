@@ -47,6 +47,7 @@ Class就是结构体objc_class，但是objc_class继承于objc_object，那就�
 
 到这里对象和类的关系已经比较清楚了，但是如果细细思考一下，会发现还有一个问题，就是meta class也是有isa指针的，那么这个isa又指向了哪里呢？在上面给出的那篇文章里面有这么一张图：
 ![class diagram.jpeg](/assets/images/2017_02_12/class_diagram.jpeg)
+
 这张图解释的非常清楚，meta class的isa指向了root meta class(绝大部分情况下root class就是NSObject)，root meta class的isa指向自身，isa的链路就是这样了。
 
 ## isa_t结构体分析
@@ -188,8 +189,10 @@ int main(int argc, const char * argv[]) {
 
 所以在initIsa()方法中添加一个条件断点，并重新运行：
 ![1.png](/assets/images/2017_02_12/1.png)
+
 运行程序，当进入断点的时候可以看到方法的调用栈是这样的：
 ![2.png](/assets/images/2017_02_12/2.png)
+
 找到2 _class_createInstanceFromZone()，在方法最后打个断点，继续运行程序进入此断点，输出obj的内存地址：
 ```
 Printing description of obj:
