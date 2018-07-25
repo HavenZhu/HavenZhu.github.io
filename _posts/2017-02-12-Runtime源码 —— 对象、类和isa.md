@@ -46,8 +46,8 @@ Class就是结构体objc_class，但是objc_class继承于objc_object，那就�
 我们都知道class中存储的是描述对象的相关信息，那么相应的meta class中存放的就是描述class相关信息。说的更直白一点，在我们写代码时，通过对象来调用的方法（实例方法）都是存储在class中的，通过类名来调用的方法（类方法）都是存储在meta class中的。
 
 到这里对象和类的关系已经比较清楚了，但是如果细细思考一下，会发现还有一个问题，就是meta class也是有isa指针的，那么这个isa又指向了哪里呢？在上面给出的那篇文章里面有这么一张图：
-<div style="align: center">
-![class diagram.jpeg](/assets/images/2017_02_12/class_diagram.jpeg)
+<div align=center>
+    ![class diagram](/assets/images/2017_02_12/class_diagram.jpeg)
 </div>
 
 这张图解释的非常清楚，meta class的isa指向了root meta class(绝大部分情况下root class就是NSObject)，root meta class的isa指向自身，isa的链路就是这样了。
@@ -190,13 +190,13 @@ int main(int argc, const char * argv[]) {
 >只要代码不变，这个类在内存中的地址就不会变
 
 所以在initIsa()方法中添加一个条件断点，并重新运行：
-<div style="align: center">
-![1.png](/assets/images/2017_02_12/1.png)
+<div align=center>
+![1](/assets/images/2017_02_12/1.png)
 </div>
 
 运行程序，当进入断点的时候可以看到方法的调用栈是这样的：
-<div style="align: center">
-![2.png](/assets/images/2017_02_12/2.png)
+<div align=center>
+![2](/assets/images/2017_02_12/2.png)
 </div>
 
 找到2 _class_createInstanceFromZone()，在方法最后打个断点，继续运行程序进入此断点，输出obj的内存地址：
