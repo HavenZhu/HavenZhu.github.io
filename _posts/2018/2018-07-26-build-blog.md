@@ -7,7 +7,7 @@ tags: [mix]
 
 这几天跟我老婆聊天，她说无聊时想写写东西，我说我给你搭个博客，你就在自己的博客里写吧。这一篇就记录一下搭建的过程。
 
-主要分成以下几个步骤
+主要分成以下几个步骤:
 1. jekyll 生成博客框架
 2. github 托管
 3. nginx 配置访问静态页面
@@ -38,9 +38,9 @@ Yummy Jekyll 是将代码托管到 github page 上的，把那一坨代码 push 
 ## nginx
 
 先在阿里云上把 jekyll 和 git 的环境搭了一下。安装好 nginx 之后，直接访问阿里云的ip会进入 nginx 的默认页面。现在把默认页面修改为博客主页。
-1. clone 代码到
-2. 使用 jekyll build 生成好静态的网页，build 完所有的内容都在 _site 文件夹下。
-3. 配置 nginx，修改 site-enabled 中的 default 文件，将 root 指向 _site 文件夹。这样阿里云默认的页面就是博客主页了。
+1. clone 代码到阿里云
+2. 使用 jekyll build 生成好静态的网页，build 之后所有的内容都在 _site 文件夹下。
+3. 配置 nginx，修改 /etc/nginx/site-enabled/ 中的 default 文件，将 root 指向 _site 文件夹。这样阿里云默认的页面就是博客主页了。
 
 ## crontab
 
