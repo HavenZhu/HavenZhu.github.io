@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 我想做的一个改变
-category: 随笔
-tags: [随笔]
+category: essay
+tags: [essay]
 ---
 
 从没想过有一天我也会开始写字。决定写这一篇是因为昨天碰到一些事，这些事对我感触挺大，想记录一下自己的想法。

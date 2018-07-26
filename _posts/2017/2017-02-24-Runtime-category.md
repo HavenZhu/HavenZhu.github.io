@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Runtime源码 —— 关于category的一个问题
-category: Runtime源码阅读
+category: Runtime
 tags: [Runtime]
 ---
 

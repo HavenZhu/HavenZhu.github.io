@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 做一个倾听者
-category: 随笔
-tags: [随笔]
+category: essay
+tags: [essay]
 ---
 
 昨晚和肥孩子吵架，过程很惨烈，结果很美好。

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Runtime源码 —— 概述和调试环境准备
-category: Runtime源码阅读
+category: Runtime
 tags: [Runtime]
 ---
 

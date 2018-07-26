@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 搬家记
-category: 随笔
-tags: [随笔]
+category: essay
+tags: [essay]
 ---
 
 这周在搬家。这是来上海之后第4次搬家，每年一次，声势愈发浩大。好在这是最后一次。

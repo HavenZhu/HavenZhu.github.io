@@ -1,7 +1,7 @@
 ---
 layout: post
 title: NSLocalizedString的一个小知识点
-category: OC杂
+category: OC
 tags: [OC]
 ---
 

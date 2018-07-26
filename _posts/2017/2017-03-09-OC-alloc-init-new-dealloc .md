@@ -1,7 +1,7 @@
 ---
 layout: post
 title: OC源码 —— alloc,init,new和dealloc
-category: OC源码阅读
+category: OC
 tags: [OC]
 ---
 

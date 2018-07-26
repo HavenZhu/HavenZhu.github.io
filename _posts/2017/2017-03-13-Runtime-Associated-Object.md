@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Runtime源码 —— Associated Object
-category: Runtime源码阅读
+category: Runtime
 tags: [Runtime]
 ---
 
