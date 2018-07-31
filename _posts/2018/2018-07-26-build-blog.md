@@ -15,7 +15,7 @@ tags: [mix]
 
 ## jekyll
 
-博客是基于[jekyll](https://jekyllrb.com/)搭建的，jekyll 是个博客生成工具，类似于 WordPress，不同的是 jekyll 只生成静态网页。
+博客是基于[jekyll](https://jekyllrb.com/)搭建的，jekyll 是个博客生成工具，类似于 WordPress，不同的是 jekyll 只生成静态网页。支持 markdown 语法，写起来非常舒服。
 按照官网的说明：
 ```text
 ~ $ gem install bundler jekyll
@@ -64,7 +64,7 @@ linux crontab的作用就是定时执行某个命令。
 # 1h between 8am and 11pm
 0 8-23 * * * /usr/crontab/xxxxxx.sh >> /usr/crontab/xxxxxxx.log 2>&1
 ```
-这里就是在上午8点到下午11点之间每隔一个小时执行一次上面的脚本，并输出日志。
+这里就是在上午8点到晚上11点之间每隔一个小时执行一次上面的脚本，并输出日志。
 > 关于crontab的用法可以参考：[crontab定时任务](http://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/crontab.html)
 
 搞定！以后就只需要写好博客并push上去就可以啦。
