@@ -130,6 +130,11 @@
     border-top:2px solid #eee
 }
 
+.site-footer-remark{
+    line-height: 32px;
+    text-align: center;
+}
+
 .site-footer .octicon-mark-github {
     position: absolute;
     left: 50%;
