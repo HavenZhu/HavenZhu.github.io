@@ -13,8 +13,8 @@
     <meta name="description"
           content="类、对象、方法和属性算是写OC代码时接触的最多的部分了。本篇就以对象为切入点，分析一下对象和类在runtime层面的表示。">
 
-    <link rel="canonical" href="http://47.100.168.106/runtime%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/2017/02/12/Runtime%E6%BA%90%E7%A0%81-%E5%AF%B9%E8%B1%A1-%E7%B1%BB%E5%92%8Cisa.html">
-    <link rel="alternate" type="application/rss+xml" title="虚空" href="http://47.100.168.106/feed.xml">
+    <link rel="canonical" href="http://betterzn.com/runtime%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/2017/02/12/Runtime%E6%BA%90%E7%A0%81-%E5%AF%B9%E8%B1%A1-%E7%B1%BB%E5%92%8Cisa.html">
+    <link rel="alternate" type="application/rss+xml" title="虚空" href="http://betterzn.com/feed.xml">
 
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
 
@@ -150,7 +150,7 @@ struct objc_class : objc_object {
 <p>到这里对象和类的关系已经比较清楚了，但是如果细细思考一下，会发现还有一个问题，就是meta class也是有isa指针的，那么这个isa又指向了哪里呢？在上面给出的那篇文章里面有这么一张图：</p>
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_12/class_diagram.jpeg" />
+    <img src="http://betterzn.com/assets/images/2017_02_12/class_diagram.jpeg" />
 </p>
 
 <p>这张图解释的非常清楚，meta class的isa指向了root meta class(绝大部分情况下root class就是NSObject)，root meta class的isa指向自身，isa的链路就是这样了。</p>
@@ -304,12 +304,12 @@ uintptr_t extra_rc          : 8;</p>
 
 <p>所以在initIsa()方法中添加一个条件断点，并重新运行：</p>
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_12/1.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_12/1.png" />
 </p>
 
 <p>运行程序，当进入断点的时候可以看到方法的调用栈是这样的：</p>
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_12/2.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_12/2.png" />
 </p>
 
 <p>找到2 _class_createInstanceFromZone()，在方法最后打个断点，继续运行程序进入此断点，输出obj的内存地址：</p>
