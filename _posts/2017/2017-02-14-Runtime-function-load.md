@@ -102,7 +102,7 @@ int main(int argc, const char * argv[]) {
 
 这个时候在void _objc_init(void)添加一个断点：
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_14/1.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_14/1.png" />
 </p>
 然后利用上面的地址就可以看一看这个时候class_ro_t的内容。
 
@@ -166,11 +166,11 @@ types那一串乱七八糟的字符串可以参考苹果的文档：[Type Encodi
 ```
 这里面提到的read-write data指的就是class_rw_t了，当然实际方法的调用栈并不是上面的路径。在realizeClass方法中添加一个断点：
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_14/2.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_14/2.png" />
 </p>
 左侧可以看到方法的调用栈，切换到4那一步：
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_14/3.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_14/3.png" />
 </p>
 可以看到是因为在main函数中打印log时调用了class方法，才一步步进入了realizeClass方法。
 >猜测：某个类的realizeClass方法是在类被首次调用的时候才会调用。

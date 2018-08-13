@@ -106,7 +106,7 @@ id _objc_rootInit(id obj)
 看到这里，我就奇怪了，这init什么都不做，还要调用了干什么，只要用一个alloc不就够了么，我测试了一下：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_03_09/alloc.png" />
+    <img src="http://betterzn.com/assets/images/2017_03_09/alloc.png" />
 </p>
 
 只调用alloc，可以设置属性，可以调用方法，看起来我们习惯的写法是远古遗留的产物。
@@ -273,7 +273,7 @@ static void object_cxxDestructFromClass(id obj, Class cls)
 
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_03_09/dealloc.png" />
+    <img src="http://betterzn.com/assets/images/2017_03_09/dealloc.png" />
 </p>
 
 先看左侧的调用栈，当我将self.obj设为nil的时候，就进入了release的过程。这里引用计数为0，所以继续进入了dealloc的过程。先调用了ZNObject类中的dealloc，打印出了log，然后就进入了本节dealloc的流程。
@@ -285,14 +285,14 @@ static void object_cxxDestructFromClass(id obj, Class cls)
 调整一下测试的代码，先给属性赋个值，再运行：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_03_09/name.png" />
+    <img src="http://betterzn.com/assets/images/2017_03_09/name.png" />
 </p>
 
 添加一个watchpoint，当name变化的时候，会自动进入断点，直接运行程序：
 
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_03_09/destruct.png" />
+    <img src="http://betterzn.com/assets/images/2017_03_09/destruct.png" />
 </p>
 
 可以看到name的销毁是在objc_storeStrong方法中进行的，这个方法被.cxx_destroy调用。遗憾的是，依然不能窥探到.cxx_destroy究竟做了些什么事。

@@ -317,7 +317,7 @@ for (const auto& ivar : *ro->ivars) {
 接着在reconcileInstanceVariables()方法中添加一个条件断点，进入断点后，通过lldb获取一下相关值，请看图：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_21/ZNObjectFather.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_21/ZNObjectFather.png" />
 </p>
 
 条件断点设置的是ZNObjectFather的地址，所以：
@@ -329,7 +329,7 @@ ZNObjectFather继承于NSObject，所以：
 根据控制台打印的信息，这一步的if判断结果为true，所以直接return了，调整一下条件断点的内容，把地址设置为ZNObjectSon的地址再试一下：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_21/ZNObjectSon.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_21/ZNObjectSon.png" />
 </p>
 
 可以看到father的start和size没有发生变化，因为上一步做过说明直接return了。
@@ -442,7 +442,7 @@ $6和$7是直接声明的ivar，排在前2位，属性生成的$8排在后面，
 moveIvars()方法前面已经分析过源码了，这里不再赘述，直接看看方法结束之后的结果，在moveIvars()方法之后加一个断点：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_21/moveIvars.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_21/moveIvars.png" />
 </p>
 
 这个时候ro的start和size已经是这样的了：
@@ -577,7 +577,7 @@ weakIvarLayout = "\x02"
 我去搜索了ASCII码表，结果真让我猜中了：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_21/ascii.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_21/ascii.png" />
 </p>
 
 所以结果其实是正确的，只是被转成了ASCII码，至于xcode为什么要这么做，我就不得而知了...

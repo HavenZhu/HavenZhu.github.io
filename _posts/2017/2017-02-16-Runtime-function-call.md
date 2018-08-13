@@ -20,7 +20,7 @@ tags: [Runtime]
 ## 方法的调用栈
 在上一篇讲方法加载的过程时，用过这么一张图来讲realizeClass()的调用栈：
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_16/realizeClass.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_16/realizeClass.png" />
 </p>
 
 当时调用的是类的class方法，在调用栈里有这么一个关键的方法：
@@ -58,7 +58,7 @@ int main(int argc, const char * argv[]) {
 在[testObj hello]这一行添加一个断点，运行程序进入断点，这时候在lookUpImpOrForward()方法中添加断点，继续运行进入此方法：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_16/hello.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_16/hello.png" />
 </p>
 左侧的调用栈里面供包含了3层，按照调用的顺序依次是：
 - _objc_msgSend_uncached
@@ -98,7 +98,7 @@ jmp	__objc_msgSend_uncached。
 （注意，这里也需要先运行进入main函数中[testObj hello]这一行之后再激活断点）
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_16/msgSend.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_16/msgSend.png" />
 </p>
 没有问题，调用栈显示先进入了objc_msgSend，单步调试的图我就不放了，感兴趣的同学可以自己试一下，下面是过程：
 1. 先进入：CacheLookup NORMAL, CALL
@@ -108,7 +108,7 @@ jmp	__objc_msgSend_uncached。
 这个时候调用栈的objc_msgSend已经看不到了，取而代之的就是__objc_msgSend_uncached：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_16/msgSend_uncached.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_16/msgSend_uncached.png" />
 </p>
 
 所以之前调用栈中的结果就可以理解了，这里也告诉了我们一个很重要的信息：**在objc_msgSend最开始的地方就已经通过cache进行过一次查找。**
@@ -191,7 +191,7 @@ CacheLookup应该就是用来查找cache的，这里是首次调用hello()方法
 在当前类的方法列表中查找，因为hello()就是当前类的方法，所以在这一步会命中，命中时候的调用栈是这样的：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_16/current_func_shot.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_16/current_func_shot.png" />
 </p>
 
 中间的方法都比较简单，我就不把源代码一一贴上来了，稍微说一下每个方法做了些什么：
@@ -206,7 +206,7 @@ CacheLookup应该就是用来查找cache的，这里是首次调用hello()方法
 这些做完之后，会调用log_and_fill_cache()把方法加入缓存，这个方法的调用栈是这样的：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_16/log_and_fill_cache.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_16/log_and_fill_cache.png" />
 </p>
 
 在cache_fill_nolock()方法中把当前调用的方法加入到cache中：

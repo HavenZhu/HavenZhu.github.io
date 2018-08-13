@@ -30,7 +30,7 @@ tags: [mix]
 
 Yummy Jekyll 是将代码托管到 github page 上的，把那一坨代码 push 上去之后，就可以感受一下啦。
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2018_07_26/blog.png" />
+    <img src="http://betterzn.com/assets/images/2018_07_26/blog.png" />
 </p>
 
 后来发现在国内访问 github 太慢了，刷新个页面要几分钟。还是得放到国内的服务器上更靠谱，之前阿里云打折的时候买了3年，刚好派上用场。

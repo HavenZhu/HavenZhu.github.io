@@ -133,7 +133,7 @@ static uintptr_t addc(uintptr_t lhs, uintptr_t rhs, uintptr_t carryin, uintptr_t
 我搜不到__builtin_addcl方法的定义或者说明文档，我只能根据测试结果来做一些猜测。测试的过程是这样的：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_03_07/addcNotFlow.png" />
+    <img src="http://betterzn.com/assets/images/2017_03_07/addcNotFlow.png" />
 </p>
 
 首先我在rootRetain()方法中添加了两个断点，一个在while内部，一个在外部，运行程序进入第一个断点，获取了一下这个时候isa的内容：
@@ -181,7 +181,7 @@ static uintptr_t addc(uintptr_t lhs, uintptr_t rhs, uintptr_t carryin, uintptr_t
 再测试一下溢出的情况，需要调整一下断点的位置如图：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_03_07/addcFlow.png" />
+    <img src="http://betterzn.com/assets/images/2017_03_07/addcFlow.png" />
 </p>
 
 进入第一个断点获取一下extra_rc的值，因为获取的时isa的内容，所以还是oldisa的值：
@@ -364,7 +364,7 @@ SideTable看起来就是用来存储引用计数的。看结构体SideTable的�
 验证一下正常的结果：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_03_07/addExtraRCNotFlow.png" />
+    <img src="http://betterzn.com/assets/images/2017_03_07/addExtraRCNotFlow.png" />
 </p>
 
 传入的参数是RC_HALF，也就是128，在addc之后，newRefcnt变为512 = 128 << 2也没问题，carry为0没有溢出，最后更新了一下存放的引用计数值。
@@ -374,7 +374,7 @@ SideTable看起来就是用来存储引用计数的。看结构体SideTable的�
 一个合理的疑问是，当extra_rc再次溢出的时候呢？很容易测试，只需要再进一次断点，如下图：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_03_07/addExtraRCFlow.png" />
+    <img src="http://betterzn.com/assets/images/2017_03_07/addExtraRCFlow.png" />
 </p>
 
 这个时候oldRefcnt已经是512 = 128 << 2，也就是上一步存进去的结果，addc之后又加了128进去。说白了每次extra_rc溢出了，SideTable中就增加128。

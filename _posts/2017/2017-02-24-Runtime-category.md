@@ -24,7 +24,7 @@ tags: [Runtime]
 在其他文章中，根本没有这样的区分，分类全部都是在运行时附加上去的，附加时的调用栈也很清晰：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_24/attachCategory.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_24/attachCategory.png" />
 </p>
 
 ## 过程
@@ -34,7 +34,7 @@ tags: [Runtime]
 为了验证那个结论，我创建了这些类：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_24/testClass.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_24/testClass.png" />
 </p>
 
 1. 对NSObject和NSViewController创建的分类
@@ -118,11 +118,11 @@ class name is: ZNViewController, category name is: MyVCAddition
 结果当然不是这样的，不然我也不会写这篇文章了：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_24/objAddition.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_24/objAddition.png" />
 </p>
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_24/vcAddition.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_24/vcAddition.png" />
 </p>
 
 前2个分类都顺利找到了，但是后两个分类却搜索不到。
@@ -140,7 +140,7 @@ if (!strcmp((*(entry.cat)).name, "NSObjAddition")
 结果当然还是一样的：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_24/same.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_24/same.png" />
 </p>
 
 一共只有两行，而不是预期的四行。
@@ -170,7 +170,7 @@ if (!strcmp((*(entry.cat)).name, "NSObjAddition")
 接着在_objc_init()方法的最开始添加了一个断点，然后获取了一下ZNObject类的方法列表：
 
 <p align="center">
-    <img src="http://47.100.168.106/assets/images/2017_02_24/znobject.png" />
+    <img src="http://betterzn.com/assets/images/2017_02_24/znobject.png" />
 </p>
 
 可以看到分类的方法这个时候已经在baseMethodList中了，所以说在编译期结束的时候分类就已经附加完成了。
