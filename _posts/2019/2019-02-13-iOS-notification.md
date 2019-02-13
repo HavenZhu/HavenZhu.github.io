@@ -11,11 +11,11 @@ iOS提供的通知有两种形式，远程通知和本地通知。这篇来记�
 
 远程通知(remote notification)，就是我们常听到的APNs提供的服务。APNs(Apple Push Notification service)是苹果官方提供的健壮，安全，高效的消息推送服务。要理解远程通知，本质上就是理解APNs的工作原理。
 
-#### APNs的背景
+### APNs的背景
 
 当我们想发送一条消息时，最直接的想法是服务器直接推送消息给app客户端，但这就有一个问题，当app没有运行的时候，消息就没法送达了。为了解决这个问题，苹果提供了APNs服务，当app没有运行时，也能将消息送达到客户端。其实apple自己也在通过APNs给我们提供服务，比如系统更新等等。
 
-#### APNs的原理
+### APNs的原理
 
 远程通知由2个部分组成：
 > provider --> APNs --> device
@@ -24,7 +24,7 @@ provider就是我们的服务器，APNs相当于我们自己的服务器与设�
 
 那么在推送通知之前，这几部分之间的连接是如何建立的呢？
 
-##### provider --> APNs
+#### provider --> APNs
 
 <p align="center">
     <img src="http://betterzn.com/assets/images/2019_02_13/provider_APNs.png" />
@@ -39,7 +39,7 @@ provider就是我们的服务器，APNs相当于我们自己的服务器与设�
 
 服务器只需要将通知按照一定的格式发送给APNs，剩下的事情就由APNs负责了。
 
-##### APNs --> device
+#### APNs --> device
 
 APNs与设备之间的连接是在设备初始化的时候自动建立的，不需要app的参与，也就是不需要我们做任何事情。
 
@@ -60,7 +60,7 @@ APNs与设备之间的连接是在设备初始化的时候自动建立的，不�
 
 总的来看，provider，APNs，device之间都是通过TCP长连接来通信的。
 
-##### 发送远程通知的流程
+#### 发送远程通知的流程
 
 连接建立好了，下面就是发送通知了。
 
