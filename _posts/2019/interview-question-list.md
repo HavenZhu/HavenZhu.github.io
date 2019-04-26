@@ -90,8 +90,169 @@ NSCache不会对key执行copy操作
 一个定义为volatile的变量是说这变量可能会被意想不到地改变，这样，编译器就不会去假设这个变量的值了。
 精确地说就是，优化器在用到这个变量时必须每次都小心地重新读取这个变量的值，而不是使用保存在寄存器里的备份。
 
+- 如何把一个包含自定义对象的数组序列化到磁盘？
+对象实现NSCoding协议，使用nskeyedarchiver和nskeyedunarchiver进行归档和解归档
+
 
 ## 中级
+
+
+连信
+- 消息
+- 小程序
+- 卡顿
+- 模块化
+- UI: 朋友圈，视频通话，红包，图片编辑
+- 启动时间优化
+- 做了什么性能优化
+
+
+连信
+- 消息体系
+sync机制：通过版本号检测当前数据
+时机：在个人或群的信息发生变化，网络连接变化，后台切换到前台
+流程：发送http请求拉取sync内容，拉到后分发给handler进行处理，可能会需要连续sync
+使用sync的优点是什么
+
+sync优化，减少一次插入数据库的量，防止阻塞队列，导致主线程无法通过队列读取数据库数据，从而卡在主屏幕上
+为什么使用串行队列不使用锁
+
+
+收发消息：通过心跳保持tcp长连接，进行收发消息，如果没有长连接，通过iOS通知。每次打开app时，会进行sync操作
+多种消息类型
+
+- jenkins自动打包，脚本实现，重签名
+- 安全，pk,ck,sk,iv（模拟的https）
+- 模块化
+- 小程序容器，cordova
+定义了一个model来描述小程序，然后使用webview加载出来
+小程序包使用webpack打包，讲一哈webpack
+说是容器，其实就是controller + webview，本质上还是webview加载webpack打包出来的index.html
+小程序分享出去是一个富文本消息，别的用户点击此消息根据url获取对应的小程序并在容器中加载出来
+
+- 卡顿检测
+利用runloop observer，无法获取调用栈信息
+另开一个线程
+
+- protobuf
+- 理解连信中的长连接消息收发过程
+- tcpsocket
+- udpsocket
+socket发送data可能存在不完整的问题
+- TCP连接的建立和释放
+建立：SYN=1 + seq=x -> ACK=1 + SYN=1 + seq=y + ack=x+1 -> ACK=1 + seq=x+1 + ack=y+1
+释放：FIN=1 + seq=u -> ACK=1 + seq=v + ack=u+1
+				   -> FIN=1 + ACK=1 + seq=w + ack=u+1 -> ACK=1 + seq=u+1 + ack=w+1
+
+模块化先剥离底层模块，比如log，database，network
+业务模块肯定会依赖底层的模块，但业务模块之间不应该存在横向依赖
+模块化过程中发现了什么问题？
+为了方便直接传递对象，增加了类之间的依赖，比如logmanager依赖了很多model，实际上只是使用model的几个属性，需要改为dictionary
+
+基础
+- runtime:method swizzling, associated object，
+- runloop
+- afnetworking 														done
+- masonry															done
+- sdwebimage														done
+- FMDB
+- 动画
+- osx和ios内核
+- 多线程，GCD，NSOperation，pthread，NSThread
+- 性能调优  UIKit Object handling, Rendering, Layout
+- 内存管理，MRC(retain, release, autorelease), ARC(@autoreleasepool)	done
+- block
+- cocoapods
+- 锁，spinlock，@syncronized, nsrecrusivelock等
+- 事件响应链
+- APNS, remote notification, local notification						done
+- https																done
+- multicastdelegate													done
+- redis等其他数据库
+- 缓存，内存缓存，硬盘缓存
+- javascriptcore
+- 用runtime做了什么
+
+
+dispatch_async + 自定义串行队列：会重启一个线程来执行队列中的任务吗
+
+1. NSURLProtocol拦截http请求，再使用NSURLSession发新的请求出去，使用NSURLProtocol的client在回调中进行处理
+2. NSURLConnection被弃用的原因：下载时内存占用大，断点续传操作不便，请求只能开始和取消
+3. NSURLSession
+
+
+沙盒目录里有三个文件夹：
+Documents——存储应用程序的数据文件，存储用户数据或其他定期备份的信息；
+Library下有两个文件夹，Caches存储应用程序再次启动所需的信息，Preferences包含应用程序的偏好设置文件，不可在这更改偏好设置；
+temp存放临时文件即应用程序再次启动不需要的文件。
+
+
+[super class], 理解super关键字
+
+
+APNS
+- 客户端注册remotenotification，从APNS获取devicetoken
+- 将devicetoken发给provider
+- provider发送消息给APNS，APNS根据devicetoken及其他信息，将通知发给我们的设备，我们的设备根据通知内容，弹出通知
+连信中的通知：
+有长连接时，服务器直接通过长连接推送给app，app弹出本地通知
+没有长连接，走APNS
+
+
+- sdwebimage
+下载是基于nsurlsession
+内存缓存基于NSCache，key为url，注册了通知，会在接收到内存警告的时候清空缓存
+默认情况没有磁盘缓存大小的上限，默认磁盘缓存时长是一周，均可以修改
+option中可以设置失败是否重试，如果不重试，在一次失败后，会被加到failedUrls数组中，再碰到url相同的就不会去下载了
+多次下载同一个图片时，只有第一次会触发下载的请求，后续只会把回调添加到对应url的回调数组中，当url下载完成时，回调数组中的所有block。通过dispatch_barrier_sync来确保添加回调到数组中和触发回调的顺序
+磁盘缓存基于文件读写，一个key对应一个文件
+加载gif时，sdwebimage会把文件全部读到内存，所以内存消耗会大一些；yywebimage会一张一张的读，所以cpu开销会大一些
+yywebimage在此基础上提高了性能，磁盘缓存基于sqlite+文件，写性能sqlite高于写文件，读性能在数据小时sqlite性能好，数据大时读文件性能好，所以综合起来进行缓存
+
+
+- multicastdelegate
+本质上是利用了runtime的消息转发，当一个类没有实现某个方法时，通过forwardInvocation将消息转发出去，在此方法中遍历添加的delegate，依次执行方法
+
+
+- block是什么
+- block是如何拦截对象的
+- __block的原理
+- block循环引用是如何产生的
+- 在block使用self一定会被持有吗
+
+- 局部非对象的变量在block中使用时会被拷贝，所以不让改变值，除非加上__block，此时实际拷贝的是指针
+- 局部对象的变量在block中使用时也会被拷贝，所以为了防止误操作，在编译时就不允许改变对象指向的地址，但是可以改变对象的属性
+- block捕获对象property，也是copy一份在内部使用
+
+
+nsoperation被加到nsoperationqueue中，本质上还是由GCD来管理，与runloop没有什么关系。
+所以应该避免在nsoperation中使用runloop。
+想使用runloop，自己创建一个线程，自己来管理。
+
+
+MBProgressHud中的runloop
+mach kernel, pthread, block
+nstimer, uievent, autorelease
+caanimation
+
+
+- afnetworking
+
+AFNetworkReachabilityManager 是否用到了runloop？
+
+NSURLSession   根据request生成task
+AFURLSessionManager  对 NSURLSession 封装了一层， 更方便的生成各种task，task基于request生成
+AFHTTPSessionManager  继承于 AFURLSessionManager， 更方便http相关操作
+
+AFURLSessionManagerTaskDelegate    每一个task有单独的delegate来处理回调，放在一个字典里
+
+AFHTTPRequestSerializer    生成request的相关操作，配置各种header body之类
+AFHTTPResponseSerializer    处理response的相关操作
+
+afnetworking从2到3有什么变化，为什么做这样的变化
+
+
+
 - KVO的底层实现原理，能否手动实现一个KVO，怎么处理？
 KVO例子：视频通话过程中，监听window的屏幕常亮属性，防止由于其他操作关闭了屏幕常亮
 
@@ -101,12 +262,12 @@ KVO例子：视频通话过程中，监听window的屏幕常亮属性，防止�
 
 - 锁:
 - OSSpinLock: 存在优先级反转的问题（低优先级线程拿到锁，高优先级线程忙等，浪费cpu时间，低优先级线程获取不到cpu时间无法处理完）
-- dispatch_semaphore：就是信号量，0开始执行，-1就等待。会进行上下文切换
-- pthread_mutex：互斥锁
-- NSLock：内部封装了pthread_mutex，因为多了一层方法调用，所以性能比pthread_mutex差一点
-- NSCondition：用这玩意儿不如用dispatch_semaphore
-- pthread_mutex(recursive)：递归锁，一般情况下，除了递归调用的方法里想要加锁，其他情况很少使用。比一般的锁增加了一个count属性，每次获取锁的时候count加1，释放时count-1，为0时可以被其他线程获取。
-- NSRecursiveLock：同上
+- dispatch_semaphore: 就是信号量，0开始执行，-1就等待。会进行上下文切换
+- pthread_mutex: 互斥锁
+- NSLock: 内部封装了pthread_mutex，因为多了一层方法调用，所以性能比pthread_mutex差一点
+- NSCondition: 用这玩意儿不如用dispatch_semaphore
+- pthread_mutex(recursive): 递归锁，一般情况下，除了递归调用的方法里想要加锁，其他情况很少使用。比一般的锁增加了一个count属性，每次获取锁的时候count加1，释放时count-1，为0时可以被其他线程获取。
+- NSRecursiveLock: 同上
 - NSConditionLock
 - @synchronize：用传入的对象锁，锁存在map中，key是经过计算的对象的内存地址（花点时间看一下源码，深入理解一下）
 
@@ -160,8 +321,10 @@ protocol, property, method, object, class
 进入beforewaiting后，信号量进入：dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER)
 runloop被唤醒后，进入afterwaiting，触发_semaphore，进入dispatch_semaphore_wait(_semaphore, waitingTime)
 如果超过waitingtime，那么本次loop记为超时，将堆栈收集后上传
+为了准确收集主线程堆栈，在子线程中需要定时记录主线程堆栈
+腾讯Matrix是每隔50ms记录一次，检测到卡顿后，查询记录的20次堆栈，找到最多的相同栈顶方法，标记该方法为卡顿
 
-子线程等待主线程的信号量，超过400ms记录为一次卡顿。
+子线程等待主线程的信号量，超过400ms记录为一次卡顿。Matrix是超过2秒记录为一次卡顿
 
 
 - runloop
@@ -453,7 +616,7 @@ sqlite的优化网络通信用过哪些方式（100%的人说了AFNetworking...�
 是的
 
 使用dispatch_sync执行的代码都会在本线程中执行
-在主线程中也可以有不同的对立啊来执行
+在主线程中也可以有不同的队列来执行
 
 NSOperationQueue有哪些使用方式
 NSThread中的Runloop的作用，如何使用？
