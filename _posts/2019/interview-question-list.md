@@ -1,3 +1,86 @@
+## 理解不够深刻的内容
+
+- 这个写法会出什么问题： @property (copy) NSMutableArray *array;
+1、添加,删除,修改数组内的元素的时候,程序会因为找不到对应的方法而崩溃.因为 copy 就是复制一个不可变 NSArray 的对象
+2、使用了 atomic 属性会严重影响性能
+
+- 为什么block要使用copy修饰
+默认情况下，block会存档在栈中，所以block会在函数调用结束被销毁，在调用会报空指针异常。
+如果用copy修饰的话，可以使其保存在堆区，它的生命周期会随着对象的销毁而结束的。只要对象不销毁，我们就可以调用在堆中的block。
+
+- nstimer什么时候释放
+timer会强引用target，一般情况下target就是self，所以导致self不会被释放，需要手动调用invalidate方法
+timer被加入到runloop中，不会自动释放
+
+- assign和weak的区别
+如果用来指向oc对象，都不会增加引用计数
+区别是weak指针在指向的对象被释放时会自动置为nil，assign指针不会被置为nil，从而出现野指针
+
+
+- 一次完整的http请求过程
+DNS解析获取到对象的ip地址
+应用层：创建http请求报文
+运输层：创建tcp报文，在http的基础上加上了源端口和目的端口号
+网络层：创建ip报文，在tcp报文的基础上加上了源ip地址和目的ip地址
+链路层：拿到ip报文后，创建以太网帧，需要目标mac地址，同一个子网状态下，通过arp协议可以拿到目标mac地址，不同网络情况下，目标mac地址填自己的网关路由地址，最终路由负责转发到目标地址
+目标受到请求之后，解析出http请求的内容，封装好response，通过相同的路径返回过来
+
+- 本地通知
+UNUserNotificationCenter用于管理app和app extension通知相关任务。
+你可以在任意线程同时调用该方法，该方法会根据任务发起时间串行执行。
+
+- 点击一次界面时，触摸事件是如何传递到被点击的那个view的
+
+- 客户端如何统计消息的到达率
+
+
+- NSOperation中的main()和start()方法的区别
+nsoperation有并发和非并发两种，通常使用非并发，非并发的意思是自己不管理并发操作，交给队列来管理
+start()方法，如果是并发类型的operation，必须要覆写
+加入到queue中的operation，就不需要手动调用start，queue会来调用这个start方法
+
+正常的流程是这样的，调用start方法，设置isExecuting为YES，调用main()方法，main返回之后，设置isFinished，operation就结束了
+自己重写start()方法，不调用父类的start()方法，自己决定什么时候结束operation
+
+- GCD会碰到什么锁相关的问题
+
+
+- 单例需要怎么实现，才能确保不会通过alloc init创建出新的对象
++ (instancetype)sharedInstance
+{
+    return [[self alloc] init];
+}
+- (instancetype)init
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [super init];
+        instance.height = 10;
+        instance.object = [[NSObject alloc] init];
+        instance.arrayM = [[NSMutableArray alloc] init];
+    });
+    return instance;
+}
++ (instancetype)allocWithZone:(struct _NSZone *)zone
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [super allocWithZone:zone];
+    });
+    return instance;
+}
+
+
+- socket连接建立的过程
+服务器：创建socket(domain, type, protocol)，bind(host, port)，listen(port)，accept()等待连接
+客户端：创建socket()，connect()
+
+客户端调用connect()的时候，发送了SYN，此时connect()还没有返回
+服务器受到SYN后，返回ACK+SYN，accept()还阻塞着
+客户端收到ACK+SYN之后，返回ACK，connect()结束
+服务器受到ACK之后，accept()结束，连接建立
+
+
 ## 清单
 - runtime（对象，类，消息）
 对象，类在runtime层面都是objc_object，有一个isa属性，对象指向类，类指向元类，元类指向根元类，根元类指向自身
@@ -457,7 +540,7 @@ unmap：
 
 - 什么情况使用 weak 关键字，相比 assign 有什么不同？
 - 怎么用 copy 关键字？
-- 这个写法会出什么问题： @property (copy) NSMutableArray *array;
+
 - 如何让自己的类用 copy 修饰符？如何重写带 copy 关键字的 setter？
 - @property 的本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的
 - @protocol 和 category 中如何使用 @property
