@@ -62,9 +62,12 @@ internet control message protocol
 通过IP层发送消息，提供网络环境中问题的反馈
 依附于IP，IP头+ICMP报文
 常用的ping，traceroute都是使用了ICMP
+
 理解ping的工作原理
 发送一个IP报文，内容是ICMP echo request，收到ICMP echo reply，表明目标可达
 发送时会记录一个时间，如果记录时间+超时时间之后还没有收到reply，记录为一次ping失败
+
+## 用c或者c++写一个ping
 
 理解traceroute的工作原理
 发送的是UDP报文，收到ICMP ttl超时的回复，回复中会有该路由器的ip地址
@@ -111,3 +114,83 @@ BGP:
 Who?  自己的邻站
 What? 以AS为基本单位，交换的是AS之间的可达性，指到达某个AS所要经过的一系列AS
 When? 先建立TCP连接，通过TCP来交换路由的变化，比如新增了路由，或删除了某个路由
+
+
+- TCP
+TCP头的格式
+滑动窗口，区分发送窗口和接收窗口
+SACK，选择确认。需要在首部可选字段加上选项，填入不连续的序号首尾边界
+流量控制：
+利用滑动窗口实现，确认报文中携带的窗口大小为0后，会启动持续计时器，来防止携带新窗口大小的报文段丢失导致发送方持续等待新窗口，接收方持续等待新报文而产生的死锁
+计时器时间到了之后发送零窗口探测报文段，该报文段的确认报文段会携带最新的窗口大小
+
+拥塞控制：
+慢开始，拥塞避免，快重传，快恢复
+在网络层通过路由器采用一定的分组丢弃策略，比如主动队列管理AQM
+
+
+- UDP
+
+
+- socket
+通常我们所说的socket就是指实现了TCP/IP协议的socket接口，TCP只是协议，socket就是遵守这个协议的实现
+经常听到的TCP3次握手，4次挥手，其实都都是建立socket连接过程中的步骤
+3次握手：
+客户端调用connect()就完成了3次握手，3次握手成功之后，客户端就可以向sockfd读写数据了
+服务端收到ACK之后，accept()才能成功从backlog的队列中取到一个sockfd并返回，以后服务端就向这个sockfd读写数据
+客户端和服务端都可以通过sockfd到进程中找到对应的socket，socket中存放了目的地址和源地址，就可以收发消息了
+4次挥手：
+为什么第三次挥手除了标记FIN=1，还标记的ACK=1，并且加上了seq和第二次挥手的seq一模一样？
+因为可能存在这种异常情况，如果第三次挥手只发送了FIN，然后出现某种特殊情况导致这个请求滞留在网络中，导致重发第三次挥手，然后第四次挥手，连接断开。
+接着该端口又重新建立了连接，并再次进入断开状态，此时收到了滞留在网络中的第三次挥手FIN，然后第四次挥手，直接断开连接，而此时某一方可能还有数据没有发送完毕，从而导致了错误的断开状态。
+实际上除了发送的SYN包外，每个tcp包都应该带上ACK标志位，带上此内容并不会增加包的大小
+
+int socket(int domain, int type, int protocol);
+int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+int listen(int sockfd, int backlog);
+int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags);
+ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags);
+int close(int fd);
+
+
+- HTTPS
+先建立tcp连接，然后在此基础上进行TLS握手
+c->s: 发送clientHello消息，包括了支持的最高tls版本，一个随机数，推荐的加密算法，其他的加密信息
+s->c: 发送serverHello消息，包括选定的tls版本，此版本两边必须都能支持，一个随机数，选择的加密算法
+s->c: 发送证书
+s->c: 发送serverHelloDone消息，表明此次协商服务端部分已经结束
+c->s: 验证证书通过后，用证书里的公钥加密一个pre-master
+此时c和s都有了双方的随机数和pre-master，可以通过上面协商好的加密算法进行加密通信
+c->s: ChangeCipherSpec，告诉服务器，从后面开始的消息都是走加密了
+c->s: 客户端发送finished消息，包含了一个hash和MAC，这里的内容已经加密过了
+服务器解密后验证hash和MAC，有错的话终止连接
+s->c: ChangeCipherSpec，告诉客户端，从后面开始的消息都是走加密了
+s->c: 服务器发送finished消息，包含了一个hash和MAC，这里的内容已经加密过了
+客户端解密后验证hash和MAC，有错的话终止连接
+
+握手流程结束，后续走对称加密了
+
+一切都是为了安全，这也是握手流程这么复杂的原因
+
+
+
+1. Negotiation phase:
+- A client sends a ClientHello message specifying the highest TLS protocol version it supports, a random number, a list of suggested cipher suites and suggested compression methods. If the client is attempting to perform a resumed handshake, it may send a session ID. If the client can use Application-Layer Protocol Negotiation, it may include a list of supported application protocols, such as HTTP/2.
+- The server responds with a ServerHello message, containing the chosen protocol version, a random number, CipherSuite and compression method from the choices offered by the client. To confirm or allow resumed handshakes the server may send a session ID. The chosen protocol version should be the highest that both the client and server support. For example, if the client supports TLS version 1.1 and the server supports version 1.2, version 1.1 should be selected; version 1.2 should not be selected.
+- The server sends its Certificate message (depending on the selected cipher suite, this may be omitted by the server).[291]
+- The server sends its ServerKeyExchange message (depending on the selected cipher suite, this may be omitted by the server). This message is sent for all DHE and DH_anon ciphersuites.[2]
+- The server sends a ServerHelloDone message, indicating it is done with handshake negotiation.
+- The client responds with a ClientKeyExchange message, which may contain a PreMasterSecret, public key, or nothing. (Again, this depends on the selected cipher.) This PreMasterSecret is encrypted using the public key of the server certificate.
+- The client and server then use the random numbers and PreMasterSecret to compute a common secret, called the "master secret". All other key data for this connection is derived from this master secret (and the client- and server-generated random values), which is passed through a carefully designed pseudorandom function.
+2.
+- The client now sends a ChangeCipherSpec record, essentially telling the server, "Everything I tell you from now on will be authenticated (and encrypted if encryption parameters were present in the server certificate)." The ChangeCipherSpec is itself a record-level protocol with content type of 20.
+- Finally, the client sends an authenticated and encrypted Finished message, containing a hash and MAC over the previous handshake messages.
+- The server will attempt to decrypt the client's Finished message and verify the hash and MAC. If the decryption or verification fails, the handshake is considered to have failed and the connection should be torn down.
+3.
+- Finally, the server sends a ChangeCipherSpec, telling the client, "Everything I tell you from now on will be authenticated (and encrypted, if encryption was negotiated)."
+- The server sends its authenticated and encrypted Finished message.
+- The client performs the same decryption and verification procedure as the server did in the previous step.
+4.
+- Application phase: at this point, the "handshake" is complete and the application protocol is enabled, with content type of 23. Application messages exchanged between client and server will also be authenticated and optionally encrypted exactly like in their Finished message. Otherwise, the content type will return 25 and the client will not authenticate.
