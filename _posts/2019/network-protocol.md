@@ -175,22 +175,33 @@ s->c: 服务器发送finished消息，包含了一个hash和MAC，这里的内�
 一切都是为了安全，这也是握手流程这么复杂的原因
 
 
+- RTMP
+real time messaging protocol
+实时音视频基于此协议进行推流和拉流
+综合理解流媒体服务是怎么使用CDN的
 
-1. Negotiation phase:
-- A client sends a ClientHello message specifying the highest TLS protocol version it supports, a random number, a list of suggested cipher suites and suggested compression methods. If the client is attempting to perform a resumed handshake, it may send a session ID. If the client can use Application-Layer Protocol Negotiation, it may include a list of supported application protocols, such as HTTP/2.
-- The server responds with a ServerHello message, containing the chosen protocol version, a random number, CipherSuite and compression method from the choices offered by the client. To confirm or allow resumed handshakes the server may send a session ID. The chosen protocol version should be the highest that both the client and server support. For example, if the client supports TLS version 1.1 and the server supports version 1.2, version 1.1 should be selected; version 1.2 should not be selected.
-- The server sends its Certificate message (depending on the selected cipher suite, this may be omitted by the server).[291]
-- The server sends its ServerKeyExchange message (depending on the selected cipher suite, this may be omitted by the server). This message is sent for all DHE and DH_anon ciphersuites.[2]
-- The server sends a ServerHelloDone message, indicating it is done with handshake negotiation.
-- The client responds with a ClientKeyExchange message, which may contain a PreMasterSecret, public key, or nothing. (Again, this depends on the selected cipher.) This PreMasterSecret is encrypted using the public key of the server certificate.
-- The client and server then use the random numbers and PreMasterSecret to compute a common secret, called the "master secret". All other key data for this connection is derived from this master secret (and the client- and server-generated random values), which is passed through a carefully designed pseudorandom function.
-2.
-- The client now sends a ChangeCipherSpec record, essentially telling the server, "Everything I tell you from now on will be authenticated (and encrypted if encryption parameters were present in the server certificate)." The ChangeCipherSpec is itself a record-level protocol with content type of 20.
-- Finally, the client sends an authenticated and encrypted Finished message, containing a hash and MAC over the previous handshake messages.
-- The server will attempt to decrypt the client's Finished message and verify the hash and MAC. If the decryption or verification fails, the handshake is considered to have failed and the connection should be torn down.
-3.
-- Finally, the server sends a ChangeCipherSpec, telling the client, "Everything I tell you from now on will be authenticated (and encrypted, if encryption was negotiated)."
-- The server sends its authenticated and encrypted Finished message.
-- The client performs the same decryption and verification procedure as the server did in the previous step.
-4.
-- Application phase: at this point, the "handshake" is complete and the application protocol is enabled, with content type of 23. Application messages exchanged between client and server will also be authenticated and optionally encrypted exactly like in their Finished message. Otherwise, the content type will return 25 and the client will not authenticate.
+
+- DNS
+domain name system（域名系统）
+DNS都是高可用，高并发，分布式的，一台服务器出错了，还可以发给其他服务器解析
+理解域名解析的过程，主机，域名解析器，本地域名服务器，根域名服务器，顶级域名服务器，二级域名服务器...
+理解高速缓存的作用，浏览器的缓存，操作系统的缓存，域名服务器的缓存
+DNS的负载均衡采用的是轮询式，不能了解每台服务器的真实情况，无法真正的均衡
+正常的域名解析是通过本地域名服务器进行的递归解析，其中域名解析器，本地域名服务器都可能存在缓存，如果缓存命中了就不会走后续的解析过程了
+
+DNS存在如下的问题：
+1. 域名缓存问题，不会每次请求都会发给权威服务器，一次请求过后，本地就有了缓存，缓存可能导致页面不能及时更新
+2. 域名转发问题，运营商A将解析请求转发给了运营商B，B的权威服务器就认为你是B运营商的，最后返回的就是B运营商的ip地址，结果用户跨运营商访问，速度变慢
+3. 域名更新问题，一处机房出问题时，需要修改权威DNS，让其指向新的ip地址，但因为缓存的原因，更新可能较慢
+4. 解析延迟问题，一次解析，需要遍历多层DNS服务器，速度较慢
+
+
+- HTTPDNS
+为了解决DNS存在的各种问题，在移动客户端开发的应用里，更适合使用HTTPDNS
+先发起一个http请求，获取域名对应的ip列表，然后从中选择一个ip直接发送请求，而不对域名发出请求，省去了域名解析的过程
+
+
+- FTP
+
+
+- CDN
