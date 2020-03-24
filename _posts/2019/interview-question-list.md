@@ -35,9 +35,9 @@ UNUserNotificationCenter用于管理app和app extension通知相关任务。
 
 
 - NSOperation中的main()和start()方法的区别
-nsoperation有并发和非并发两种，通常使用非并发，非并发的意思是自己不管理并发操作，交给队列来管理
-start()方法，如果是并发类型的operation，必须要覆写
-加入到queue中的operation，就不需要手动调用start，queue会来调用这个start方法
+如果想要自己管理operation，一般需要重写start方法来管理operation的状态
+正常会把operation加入到queue中，这时候只需要重写main方法，operation的状态会由queue来管理
+operation的concurrent属性将要被废弃，使用synchronize属性来决定此operation是否需要在执行的线程中同步还是异步执行
 
 正常的流程是这样的，调用start方法，设置isExecuting为YES，调用main()方法，main返回之后，设置isFinished，operation就结束了
 自己重写start()方法，不调用父类的start()方法，自己决定什么时候结束operation
