@@ -732,3 +732,16 @@ UIView的frame和bounds的区别是什么
 如何提高一个应用程序的性能？
 不同版本的APP，数据库结构变化了，如何处理?
 
+
+
+- 触摸事件
+最顶层是IOKit，会封装IOHidEvent事件
+通过mach port(进程间通信)发给springboard
+springboard识别当前在前台的app，再通过mach port(进程间通信)发给对应的app
+对应app的主线程runloop会收到一个source1的回调
+这个source1回调是苹果注册用来监听mach port事件的
+在这个source1回调中会触发source0回调
+source0回调的内部将触摸事件封装为UIEvent，并发送给UIWindow
+
+
+
